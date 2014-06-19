@@ -32,7 +32,7 @@ __all__ = ["encode", "decode", "normalize"]
 
 
 bytes_types = (bytes, bytearray)
-string_types = (str, unicode)
+string_types = (str)
 
 # The encoded symbol space does not include I, L, O or U
 symbols = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'
@@ -41,7 +41,7 @@ check_symbols = '*~$=U'
 
 encode_symbols = {i: ch for (i, ch) in enumerate(symbols + check_symbols)}
 decode_symbols = {ch: i for (i, ch) in enumerate(symbols + check_symbols)}
-normalize_symbols = string.maketrans('IiLlOo', '111100')
+normalize_symbols = str.maketrans('IiLlOo', '111100')
 valid_symbols = re.compile('^[%s]+[%s]?$' % (symbols,
                                              re.escape(check_symbols)))
 
@@ -155,7 +155,7 @@ def normalize(symbol_string, strict=False):
     else:
         raise TypeError("string should be bytes or ASCII, not %s" %
                         symbol_string.__class__.__name__)
-    string = symbol_string.translate(normalize_symbols, '-').upper()
+    string = symbol_string.decode("utf-8").translate(normalize_symbols).replace('-','').upper()
 
     if not valid_symbols.match(string):
         raise ValueError("string '%s' contains invalid characters" % string)
